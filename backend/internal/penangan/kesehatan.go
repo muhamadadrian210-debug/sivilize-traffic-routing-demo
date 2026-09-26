@@ -18,8 +18,13 @@ func PeriksaKesehatan(db *sql.DB) gin.HandlerFunc {
 			statusDatabase = "terputus"
 		}
 
+		statusTeks := "sehat"
+		if c.Request.URL.Path == "/health" {
+			statusTeks = "ok"
+		}
+
 		c.JSON(http.StatusOK, gin.H{
-			"status":   "sehat",
+			"status":   statusTeks,
 			"database": statusDatabase,
 		})
 	}

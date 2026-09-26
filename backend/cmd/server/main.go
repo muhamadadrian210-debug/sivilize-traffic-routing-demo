@@ -34,10 +34,14 @@ func main() {
 	mesin := gin.Default()
 	mesin.Use(middleware.AturCORS(konf.UrlFrontend))
 
+	// Endpoint health check publik
+	mesin.GET("/health", penangan.PeriksaKesehatan(db))
+
 	api := mesin.Group("/api")
 	{
 		// Pemeriksaan kesehatan
 		api.GET("/kesehatan", penangan.PeriksaKesehatan(db))
+		api.GET("/health", penangan.PeriksaKesehatan(db))
 
 		// CRUD Tujuan
 		api.GET("/tujuan", penangan.DaftarTujuan(db))

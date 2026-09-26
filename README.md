@@ -1,600 +1,196 @@
 # Sivilize Traffic Routing Demo
 
-**Sivilize Traffic Routing Demo** adalah aplikasi MVP (*Minimum Viable Product* / *Proof of Concept*) untuk sistem routing trafik berbasis aturan (*rule-based traffic routing*). Sistem ini dirancang untuk menerima data permintaan trafik pengunjung, menganalisis parameter kontekstual (negara, perangkat, peramban), mencocokkannya dengan aturan berprioritas, menentukan halaman tujuan yang sesuai atau tujuan cadangan (*fallback*), mencatat riwayat lalu lintas, serta menampilkan seluruh proses tersebut melalui antarmuka dasbor.
+## Deskripsi
 
-> **Status Proyek**: Demo saja, bukan untuk kebutuhan produksi komersial langsung.  
+**Sivilize Traffic Routing Demo** adalah aplikasi MVP (*Minimum Viable Product* / *Proof of Concept*) untuk sistem routing trafik berbasis aturan (*rule-based traffic routing*). Sistem ini menerima data konteks pengunjung (negara, jenis perangkat, peramban, User-Agent, referer), mencocokkannya dengan aturan berprioritas, menentukan halaman tujuan yang paling relevan atau tujuan cadangan (*fallback*), serta mencatat riwayat evaluasi ke PostgreSQL secara real-time.
+
+> **Status Proyek**: DEMO / MVP (Proof of Concept), bukan sistem enterprise production langsung.  
 > **Pemilik**: Sivilize Corp
 
 ---
 
-## 1. Tujuan Proyek
-
-1. Menerima data permintaan trafik web.
-2. Menganalisis informasi dasar pengunjung (negara, jenis perangkat, jenis peramban).
-3. Membandingkan informasi konteks pengunjung dengan daftar aturan yang aktif.
-4. Menentukan tujuan yang paling sesuai berdasarkan urutan prioritas aturan.
-5. Menyediakan tujuan cadangan (*fallback*) jika tidak ada aturan yang cocok.
-6. Mencatat hasil pemeriksaan trafik ke dalam basis data.
-7. Menyediakan antarmuka dasbor untuk pemantauan, pengelolaan aturan/tujuan, dan uji simulasi trafik.
-
----
-
-## 2. Cara Kerja Sistem
-
-```
-Pengunjung / Permintaan Uji
-           │
-           ▼
-Penganalisis Permintaan (IP, Perangkat, Peramban, Negara)
-           │
-           ▼
-Mesin Aturan (Pencocokan berdasarkan Prioritas Terkecil)
-      ┌────┴────┐
-      ▼         ▼
-    Cocok?   Tidak Cocok?
-      │         │
-      │         ▼
-      │     Tujuan Cadangan (/demo/cadangan)
-      ▼
-Tujuan Terpilih (/demo/halaman-a atau /demo/halaman-b)
-           │
-           ▼
-Pencatatan Log Trafik (Tabel catatan_trafik)
-           │
-           ▼
-Tampilan Dasbor & Hasil Pemeriksaan
-```
-
----
-
-## 3. Teknologi yang Digunakan
-
-- **Backend**: Golang dengan kerangka kerja HTTP [Gin](https://github.com/gin-gonic/gin)
-- **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS
-- **Basis Data**: PostgreSQL (akan diintegrasikan mulai Tahap 2)
-- **Komunikasi**: REST API dengan format data JSON
-- **Repositori & Versi**: Git / GitHub
-
----
-
-## 4. Struktur Folder Proyek
+## Arsitektur Sistem
 
 ```text
-sivilize-traffic-routing-demo/
-│
-├── README.md               # Dokumentasi utama proyek dalam Bahasa Indonesia
-├── .gitignore              # Daftar berkas/folder yang diabaikan Git
-├── .env.example            # Contoh konfigurasi variabel lingkungan utama
-│
-├── backend/                # Kode sumber aplikasi backend (Golang)
-│   ├── go.mod              # Definisi modul dan dependensi Go
-│   ├── go.sum              # Checksum verifikasi dependensi Go
-│   ├── cmd/
-│   │   └── server/
-│   │       └── main.go     # Titik masuk utama aplikasi backend
-│   ├── internal/
-│   │   ├── konfigurasi/    # Pemuat konfigurasi dari environment
-│   │   ├── basisdata/      # Koneksi dan inisialisasi PostgreSQL (Tahap 2)
-│   │   ├── model/          # Definisi entitas data (Tahap 2)
-│   │   ├── repositori/     # Akses query database langsung (Tahap 2)
-│   │   ├── layanan/        # Logika bisnis perantara (Tahap 3-4)
-│   │   ├── penangan/       # HTTP handler Gin untuk endpoint API
-│   │   ├── middleware/     # Penanganan CORS dan autentikasi/keamanan
-│   │   ├── aturan/         # Mesin aturan dan evaluasi prioritas (Tahap 5)
-│   │   └── pencatatan/     # Modul pencatatan log trafik (Tahap 6-7)
-│   ├── migrasi/            # Skrip DDL tabel database (Tahap 2)
-│   └── pengujian/          # Unit test mesin aturan dan handler (Tahap 5 & 11)
-│
-└── frontend/               # Kode sumber aplikasi antarmuka (Next.js)
-    ├── package.json        # Dependensi dan skrip frontend
-    ├── tsconfig.json       # Konfigurasi kompilasi TypeScript
-    ├── .env.example        # Contoh environment variabel frontend
-    ├── .env.local          # Konfigurasi lokal frontend
-    ├── app/                # Halaman Next.js App Router
-    ├── komponen/           # Komponen UI modular
-    ├── pustaka/            # Utilitas pembantu dan pemanggil API
-    ├── tipe/               # Antarmuka dan tipe data TypeScript
-    └── kait/               # React Custom Hooks
+Pengunjung / Uji Simulasi
+           │
+           ▼
+    Frontend Dashboard (Next.js)
+           │
+           ▼ (REST API / JSON)
+     Backend Server (Golang Gin)
+           │
+           ▼
+    Request Analyzer (Ekstraksi & Normalisasi Konteks)
+           │
+           ▼
+    Rule Engine (Evaluasi Aturan Aktif & Prioritas)
+      ┌────┴────┐
+      ▼         ▼
+    Cocok    Fallback (Default /demo/cadangan)
+      │         │
+      └────┬────┘
+           ▼
+    Traffic Logging (PostgreSQL: traffic_logs)
+           │
+           ▼
+    Hasil Routing JSON
 ```
 
 ---
 
-## 5. Cara Menjalankan Aplikasi Secara Lokal
+## Tech Stack
 
-### Prasyarat
-- **Go**: Versi 1.22 atau lebih baru
-- **Node.js**: Versi 18 atau lebih baru (npm disertakan)
-
-### Langkah Menjalankan Backend:
-1. Buka terminal dan masuk ke folder `backend`:
-   ```bash
-   cd backend
-   ```
-2. Jalankan server:
-   ```bash
-   go run ./cmd/server
-   ```
-3. Server backend akan aktif pada port `http://localhost:8080`.
-
-### Langkah Menjalankan Frontend:
-1. Buka terminal baru dan masuk ke folder `frontend`:
-   ```bash
-   cd frontend
-   ```
-2. Pasang dependensi jika belum (hanya saat pertama kali):
-   ```bash
-   npm install
-   ```
-3. Jalankan server pengembangan Next.js:
-   ```bash
-   npm run dev
-   ```
-4. Buka peramban pada alamat `http://localhost:3000`.
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS
+- **Backend**: Golang 1.23, Gin Web Framework
+- **Basis Data**: PostgreSQL 17
+- **Komunikasi**: REST API (JSON)
+- **Deployment**: Vercel (Frontend), Docker / Render / Railway (Backend), Managed PostgreSQL
 
 ---
 
-## 6. Konfigurasi Basis Data, Migrasi & Seed (Tahap 2)
+## Fitur Utama
 
-*Catatan: Sesuai pedoman pembangunan berfokus pada Tahap 1, modul basis data belum diaktifkan pada tahap ini.*
-
-Pada Tahap 2, basis data PostgreSQL akan dihubungkan menggunakan `DATABASE_URL` dengan tabel:
-1. `tujuan` (halaman target trafik)
-2. `aturan` (kriteria pencocokan konteks pengunjung)
-3. `catatan_trafik` (riwayat evaluasi lalu lintas)
-
----
-
-## 7. Dokumentasi API
-
-Seluruh response API menggunakan format standar:
-- Berhasil: `{"data": ...}`
-- Error: `{"error": true, "pesan": "..."}`
+1. **Pemeriksaan Kesehatan (`/health` & `/api/kesehatan`)**: Memantau ketersediaan server dan koneksi PostgreSQL aktif.
+2. **Manajemen Tujuan (`/api/tujuan`)**: CRUD halaman target trafik, lengkap dengan pencegahan penghapusan jika masih dijadikan referensi oleh aturan (`409 Conflict`).
+3. **Manajemen Aturan (`/api/aturan`)**: CRUD aturan multi-kriteria (negara, perangkat, peramban, User-Agent, referer) dengan prioritas dan toggle aktif/nonaktif (`PATCH /api/aturan/:id/status`).
+4. **Request Analyzer**: Mengklasifikasikan perangkat (`mobile`, `tablet`, `desktop`, `unknown`) dan peramban (`Edge`, `Chrome`, `Firefox`, `Safari`, `Lainnya`), dengan normalisasi string tanpa merusak nilai asli User-Agent.
+5. **Rule Engine & Prioritas**: Evaluasi deterministik di mana angka prioritas lebih kecil menang (`1` > `5`), dengan penanganan fallback otomatis.
+6. **Pencatatan Trafik (`traffic_logs`)**: Riwayat evaluasi trafik real-time tersimpan ke PostgreSQL dengan indeks performa.
+7. **Paginasi Log (`/api/log-trafik`)**: Mengambil log terurut dari yang terbaru dengan paginasi (`?page=1&limit=20`, maks limit 100).
+8. **Dasbor UI Interaktif**: Antarmuka visual untuk memantau status sistem, mengelola tujuan & aturan, mencoba simulasi perutean, dan memantau log.
 
 ---
 
-### A. Endpoint Pemeriksaan Sistem
+## Environment Variables
 
-#### `GET /api/kesehatan`
-- **Deskripsi**: Memeriksa status kesehatan server dan konektivitas PostgreSQL.
-- **Respons (200 OK)**:
-  ```json
-  {
-    "status": "sehat",
-    "database": "terhubung"
-  }
-  ```
-
----
-
-### B. Endpoint Tujuan
-
-#### `GET /api/tujuan`
-- **Deskripsi**: Mengambil daftar seluruh tujuan yang tersimpan (diurutkan berdasarkan `id ASC`).
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": [
-      {
-        "id": 1,
-        "nama": "Halaman A",
-        "url": "/demo/halaman-a",
-        "status": true,
-        "dibuat_pada": "2026-09-26T07:23:55Z",
-        "diperbarui_pada": "2026-09-26T07:23:55Z"
-      }
-    ]
-  }
-  ```
-
-#### `GET /api/tujuan/:id`
-- **Deskripsi**: Mengambil data satu tujuan berdasarkan ID.
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": {
-      "id": 1,
-      "nama": "Halaman A",
-      "url": "/demo/halaman-a",
-      "status": true,
-      "dibuat_pada": "2026-09-26T07:23:55Z",
-      "diperbarui_pada": "2026-09-26T07:23:55Z"
-    }
-  }
-  ```
-- **Respons Error (404 Not Found)**:
-  ```json
-  {
-    "error": true,
-    "pesan": "Tujuan tidak ditemukan"
-  }
-  ```
-
-#### `POST /api/tujuan`
-- **Deskripsi**: Menambahkan tujuan baru.
-- **Request Body**:
-  ```json
-  {
-    "nama": "Halaman Promo",
-    "url": "/demo/promo",
-    "status": true
-  }
-  ```
-- **Respons (201 Created)**:
-  ```json
-  {
-    "data": {
-      "id": 4,
-      "nama": "Halaman Promo",
-      "url": "/demo/promo",
-      "status": true,
-      "dibuat_pada": "2026-09-26T07:30:00Z",
-      "diperbarui_pada": "2026-09-26T07:30:00Z"
-    }
-  }
-  ```
-
-#### `PUT /api/tujuan/:id`
-- **Deskripsi**: Memperbarui tujuan yang sudah ada.
-- **Request Body**:
-  ```json
-  {
-    "nama": "Halaman Promo Baru",
-    "url": "/demo/promo-baru",
-    "status": true
-  }
-  ```
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": {
-      "id": 4,
-      "nama": "Halaman Promo Baru",
-      "url": "/demo/promo-baru",
-      "status": true,
-      "dibuat_pada": "2026-09-26T07:30:00Z",
-      "diperbarui_pada": "2026-09-26T07:35:00Z"
-    }
-  }
-  ```
-
-#### `DELETE /api/tujuan/:id`
-- **Deskripsi**: Menghapus tujuan berdasarkan ID. Jika tujuan masih digunakan oleh aturan, penghapusan ditolak dengan konflik data.
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": {
-      "pesan": "Tujuan berhasil dihapus"
-    }
-  }
-  ```
-- **Respons Konflik (409 Conflict)**:
-  ```json
-  {
-    "error": true,
-    "pesan": "Tujuan masih digunakan oleh aturan dan tidak dapat dihapus"
-  }
-  ```
-
----
-
-### C. Endpoint Aturan
-
-#### `GET /api/aturan`
-- **Deskripsi**: Mengambil seluruh daftar aturan lengkap dengan data tujuan melalui JOIN PostgreSQL (diurutkan berdasarkan `prioritas ASC, id ASC`).
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": [
-      {
-        "id": 1,
-        "nama": "Indonesia Mobile",
-        "negara": "ID",
-        "perangkat": "mobile",
-        "peramban": null,
-        "agen_pengguna": null,
-        "asal_rujukan": null,
-        "tujuan_id": 1,
-        "tujuan_nama": "Halaman A",
-        "tujuan_url": "/demo/halaman-a",
-        "prioritas": 1,
-        "status": true,
-        "dibuat_pada": "2026-09-26T07:23:55Z",
-        "diperbarui_pada": "2026-09-26T07:23:55Z"
-      }
-    ]
-  }
-  ```
-
-#### `GET /api/aturan/:id`
-- **Deskripsi**: Mengambil satu aturan berdasarkan ID lengkap dengan data tujuan.
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": {
-      "id": 1,
-      "nama": "Indonesia Mobile",
-      "negara": "ID",
-      "perangkat": "mobile",
-      "peramban": null,
-      "agen_pengguna": null,
-      "asal_rujukan": null,
-      "tujuan_id": 1,
-      "tujuan_nama": "Halaman A",
-      "tujuan_url": "/demo/halaman-a",
-      "prioritas": 1,
-      "status": true,
-      "dibuat_pada": "2026-09-26T07:23:55Z",
-      "diperbarui_pada": "2026-09-26T07:23:55Z"
-    }
-  }
-  ```
-
-#### `POST /api/aturan`
-- **Deskripsi**: Menambahkan aturan pencocokan baru.
-- **Request Body**:
-  ```json
-  {
-    "nama": "Aturan Indonesia Desktop",
-    "negara": "ID",
-    "perangkat": "desktop",
-    "peramban": "Chrome",
-    "agen_pengguna": null,
-    "asal_rujukan": null,
-    "tujuan_id": 2,
-    "prioritas": 2,
-    "status": true
-  }
-  ```
-- **Validasi**:
-  - `nama`: Wajib diisi.
-  - `tujuan_id`: Wajib merujuk ke ID tujuan yang ada di database.
-  - `prioritas`: Wajib integer >= 1.
-  - `perangkat`: Opsional (`null`), jika diisi hanya `mobile`, `tablet`, atau `desktop`.
-  - `peramban`: Opsional (`null`), jika diisi hanya `Chrome`, `Firefox`, `Safari`, `Edge`, atau `Lainnya`.
-  - `negara`: Opsional (`null`), tidak boleh string kosong jika dikirim.
-- **Respons (201 Created)**:
-  ```json
-  {
-    "data": {
-      "id": 3,
-      "nama": "Aturan Indonesia Desktop",
-      "negara": "ID",
-      "perangkat": "desktop",
-      "peramban": "Chrome",
-      "agen_pengguna": null,
-      "asal_rujukan": null,
-      "tujuan_id": 2,
-      "tujuan_nama": "Halaman B",
-      "tujuan_url": "/demo/halaman-b",
-      "prioritas": 2,
-      "status": true,
-      "dibuat_pada": "2026-09-26T07:40:00Z",
-      "diperbarui_pada": "2026-09-26T07:40:00Z"
-    }
-  }
-  ```
-
-#### `PUT /api/aturan/:id`
-- **Deskripsi**: Mengubah seluruh konfigurasi aturan.
-- **Request Body**: Sama dengan format `POST /api/aturan`.
-- **Respons (200 OK)**: Mengembalikan data aturan terkini.
-
-#### `PATCH /api/aturan/:id/status`
-- **Deskripsi**: Mengubah status aktif/nonaktif aturan secara spesifik tanpa mengubah data lainnya.
-- **Request Body**:
-  ```json
-  {
-    "status": false
-  }
-  ```
-- **Respons (200 OK)**: Mengembalikan data aturan dengan status terkini.
-
-#### `DELETE /api/aturan/:id`
-- **Deskripsi**: Menghapus aturan berdasarkan ID.
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": {
-      "pesan": "Aturan berhasil dihapus"
-    }
-  }
-  ```
-
----
-
-### D. Request Analyzer & Mesin Aturan (Batch 4)
-
-#### 1. Konteks Pengunjung (`KonteksPengunjung`)
-Menganalisis permintaan pengunjung berdasarkan header HTTP atau masukan simulasi:
-- **Negara**: Dinormalisasi menjadi huruf kapital (misal `"id"` -> `"ID"`).
-- **Perangkat**: Diklasifikasikan menjadi `"mobile"`, `"tablet"`, `"desktop"`, atau `"unknown"`.
-- **Peramban**: Diklasifikasikan menjadi `"Chrome"`, `"Firefox"`, `"Safari"`, `"Edge"`, `"Lainnya"`, atau `"Tidak Diketahui"`.
-  - *Catatan*: Edge diprioritaskan sebelum Chrome karena User-Agent Edge memuat token Chrome. Safari diprioritaskan setelah Chrome karena User-Agent Chrome memuat token Safari/WebKit.
-- **Agen Pengguna**: String asli User-Agent tetap disimpan utuh tanpa modifikasi.
-- **Asal Rujukan (Referrer)**: Referrer asli permintaan.
-- **Alamat IP**: Diambil dari `X-Forwarded-For`, `X-Real-IP`, atau `RemoteAddr`.
-
-#### 2. Logika Pencocokan Aturan (`CocokkanAturan`)
-- Hanya aturan dengan `status = true` (aktif) yang diikutsertakan.
-- Aturan cocok jika **SEMUA** kriteria yang terisi pada aturan cocok dengan konteks pengunjung.
-- Kolom bernilai `NULL` dianggap sebagai *wildcard* (tidak membatasi kriteria).
-- Filter `agen_pengguna` dan `asal_rujukan` menggunakan pencocokan *case-insensitive substring*.
-
-#### 3. Logika Prioritas & Deterministik
-- Jika terdapat lebih dari satu aturan yang cocok, sistem memilih aturan dengan nilai `prioritas` terkecil (angka lebih kecil = prioritas lebih tinggi, contoh prioritas 1 menang atas prioritas 5).
-- Jika terdapat aturan dengan nilai prioritas yang sama persis, sistem menggunakan ID aturan terkecil secara deterministik.
-
-#### 4. Penanganan Fallback (Tujuan Cadangan)
-- Jika tidak ada aturan yang cocok, atau tujuan pada aturan yang menang sudah tidak tersedia/tidak aktif, sistem mengarahkan trafik ke URL fallback terpusat (`UrlFallback`, default: `/demo/cadangan`).
-
-#### 5. Format Hasil Evaluasi Routing (`HasilRouting`)
-Contoh hasil jika aturan cocok:
-```json
-{
-  "cocok": true,
-  "aturan_id": 1,
-  "tujuan_id": 1,
-  "url_tujuan": "/demo/halaman-a",
-  "hasil": "aturan",
-  "alasan": "Aturan 'Indonesia Mobile' (ID 1) cocok dengan permintaan pengunjung"
-}
+### Backend (`backend/.env`)
+```env
+PORT=8080
+FRONTEND_URL=http://localhost:3000
+DATABASE_URL=postgres://pengguna:kata_sandi@localhost:5432/sivilize_trafik?sslmode=disable
+FALLBACK_URL=/demo/cadangan
 ```
 
-Contoh hasil fallback (tidak ada aturan yang cocok):
-```json
-{
-  "cocok": false,
-  "aturan_id": null,
-  "tujuan_id": null,
-  "url_tujuan": "/demo/cadangan",
-  "hasil": "fallback",
-  "alasan": "Tidak ada aturan aktif yang cocok"
-}
+### Frontend (`frontend/.env.local`)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
+
+> File `.env` asli tidak boleh di-commit ke Git. Gunakan `.env.example` sebagai acuan.
 
 ---
 
-### E. Endpoint Pemeriksaan Trafik & Riwayat Log (Batch 5)
+## Local Development
 
-#### 1. `POST /api/periksa`
-- **Deskripsi**: Menerima data simulasi trafik pengunjung, menjalankan Request Analyzer dan Rule Engine, mencatat riwayat ke tabel `traffic_logs`, dan mengembalikan hasil keputusan tujuan dalam format JSON (tanpa redirect HTTP browser).
-- **Request Body**:
+### 1. Menjalankan PostgreSQL
+Jalankan skrip pembantu atau jalankan `pg_ctl`:
+```powershell
+.\jalankan-postgres.ps1
+```
+
+### 2. Menjalankan Migrasi & Data Seed
+```powershell
+cd backend
+go run cmd/migrasi/main.go
+go run cmd/seed/main.go
+```
+
+### 3. Menjalankan Backend
+```powershell
+cd backend
+go run cmd/server/main.go
+```
+*Backend aktif pada `http://localhost:8080`.*
+
+### 4. Menjalankan Frontend
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+*Buka browser pada `http://localhost:3000`.*
+
+---
+
+## Dokumentasi API
+
+Format Respons Standar:
+- **Sukses**: `{"data": ...}`
+- **Gagal**: `{"error": true, "pesan": "..."}`
+
+### A. Health Check
+- `GET /health` → `{"status": "ok", "database": "terhubung"}`
+- `GET /api/kesehatan` → `{"status": "sehat", "database": "terhubung"}`
+
+### B. Tujuan (`/api/tujuan`)
+- `GET /api/tujuan`: Mengambil seluruh daftar tujuan.
+- `GET /api/tujuan/:id`: Mengambil satu tujuan berdasarkan ID.
+- `POST /api/tujuan`: Menambahkan tujuan baru (`nama`, `url`, `status`).
+- `PUT /api/tujuan/:id`: Mengubah tujuan yang sudah ada.
+- `DELETE /api/tujuan/:id`: Menghapus tujuan (menolak dengan `409` jika masih dipakai aturan).
+
+### C. Aturan (`/api/aturan`)
+- `GET /api/aturan`: Mengambil daftar aturan dengan JOIN nama & URL tujuan.
+- `GET /api/aturan/:id`: Mengambil satu aturan berdasarkan ID.
+- `POST /api/aturan`: Menambahkan aturan (`nama`, `tujuan_id`, `prioritas`, `negara`, `perangkat`, `peramban`).
+- `PUT /api/aturan/:id`: Memperbarui seluruh konfigurasi aturan.
+- `PATCH /api/aturan/:id/status`: Mengaktifkan (`true`) atau menonaktifkan (`false`) aturan.
+- `DELETE /api/aturan/:id`: Menghapus aturan.
+
+### D. Pemeriksaan & Log Trafik
+- `POST /api/periksa`: Menerima simulasi permintaan dan menghasilkan keputusan routing dalam JSON.
   ```json
   {
     "negara": "ID",
     "perangkat": "mobile",
     "peramban": "Chrome",
-    "agen_pengguna": "Mozilla/5.0 (Linux; Android 13; SM-S908B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
-    "asal_rujukan": "https://google.com"
+    "asal_rujukan": "https://instagram.com"
   }
   ```
-- **Respons Aturan Cocok (200 OK)**:
-  ```json
-  {
-    "data": {
-      "cocok": true,
-      "aturan_id": 1,
-      "tujuan_id": 1,
-      "url_tujuan": "/demo/halaman-a",
-      "hasil": "aturan",
-      "alasan": "Aturan 'Indonesia Mobile' (ID 1) cocok dengan permintaan pengunjung"
-    }
-  }
-  ```
-- **Respons Fallback (200 OK)**:
-  ```json
-  {
-    "data": {
-      "cocok": false,
-      "aturan_id": null,
-      "tujuan_id": null,
-      "url_tujuan": "/demo/cadangan",
-      "hasil": "fallback",
-      "alasan": "Tidak ada aturan aktif yang cocok"
-    }
-  }
-  ```
-- **Respons Validasi Error (400 Bad Request)**:
-  ```json
-  {
-    "error": true,
-    "pesan": "Perangkat tidak valid (hanya mobile, tablet, atau desktop)"
-  }
-  ```
-- **Contoh curl**:
-  ```bash
-  curl -X POST http://localhost:8080/api/periksa \
-    -H "Content-Type: application/json" \
-    -d '{"negara":"ID","perangkat":"mobile","peramban":"Chrome"}'
-  ```
-
-#### 2. `GET /api/log-trafik`
-- **Deskripsi**: Mengambil riwayat catatan evaluasi trafik dengan dukungan paginasi terurut dari yang paling baru (`dibuat_pada DESC`).
-- **Query Parameter**:
-  - `page`: Nomor halaman (default: `1`, minimal: `1`).
-  - `limit`: Jumlah data per halaman (default: `20`, maksimal: `100`).
-- **Respons Berhasil (200 OK)**:
-  ```json
-  {
-    "data": [
-      {
-        "id": 10,
-        "negara": "ID",
-        "perangkat": "mobile",
-        "peramban": "Chrome",
-        "agen_pengguna": "Mozilla/5.0...",
-        "asal_rujukan": "https://google.com",
-        "aturan_id": 1,
-        "tujuan_id": 1,
-        "url_tujuan": "/demo/halaman-a",
-        "hasil": "aturan",
-        "dibuat_pada": "2026-09-26T10:00:00Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 45,
-      "total_halaman": 3
-    }
-  }
-  ```
-- **Contoh curl**:
-  ```bash
-  curl "http://localhost:8080/api/log-trafik?page=1&limit=10"
-  ```
-
-#### 3. `GET /api/log-trafik/:id`
-- **Deskripsi**: Mengambil detail satu entri log trafik berdasarkan ID uniknya.
-- **Respons (200 OK)**:
-  ```json
-  {
-    "data": {
-      "id": 10,
-      "negara": "ID",
-      "perangkat": "mobile",
-      "peramban": "Chrome",
-      "agen_pengguna": "Mozilla/5.0...",
-      "asal_rujukan": "https://google.com",
-      "aturan_id": 1,
-      "tujuan_id": 1,
-      "url_tujuan": "/demo/halaman-a",
-      "hasil": "aturan",
-      "dibuat_pada": "2026-09-26T10:00:00Z"
-    }
-  }
-  ```
-- **Respons Tidak Ditemukan (404 Not Found)**:
-  ```json
-  {
-    "error": true,
-    "pesan": "Log trafik tidak ditemukan"
-  }
-  ```
-- **Contoh curl**:
-  ```bash
-  curl "http://localhost:8080/api/log-trafik/10"
-  ```
+- `GET /api/log-trafik?page=1&limit=20`: Mengambil riwayat log trafik dengan paginasi.
+- `GET /api/log-trafik/:id`: Mengambil rincian satu log trafik.
 
 ---
 
-## 8. Pengujian
+## Demo Flow
 
-- **Backend Build Test**:
-  ```bash
-  cd backend
-  go build -v ./cmd/server
-  ```
-- **Frontend Build & Typecheck**:
-  ```bash
-  cd frontend
-  npm run build
-  ```
+1. **Buka Dasbor**: Kunjungi `http://localhost:3000` dan pastikan status backend *Online*.
+2. **Kelola Tujuan**: Buka tab **Tujuan** untuk melihat Landing A, Landing B, dan Cadangan atau menambahkan tujuan baru.
+3. **Konfigurasi Aturan**: Buka tab **Aturan** untuk melihat aturan aktif dengan urutan prioritas (`ID + Mobile → Landing A`, `ID + Desktop → Landing B`).
+4. **Uji Simulasi Trafik**: Buka tab **Simulator Uji Trafik**, isi negara `ID`, perangkat `mobile`, klik **Periksa Trafik**. Sistem akan mencocokkan ke Aturan #1 dan mengarahkan ke Landing A.
+5. **Lihat Log**: Buka tab **Log Trafik**, periksa entri baru yang langsung tercatat di tabel `traffic_logs`.
+6. **Uji Kasus Fallback**: Nonaktifkan aturan atau masukkan parameter di luar jangkauan aturan (misal negara `US`), periksa trafik kembali. Sistem akan mengarahkan ke URL Fallback `/demo/cadangan`.
 
 ---
 
-## 9. Keterbatasan MVP
+## Panduan Deployment
 
-1. **Deteksi Geolokasi**: Pada versi MVP, penentuan negara pengunjung dimasukkan secara simulasi melalui antarmuka atau parameter masukan, bukan melalui basis data IP geolokasi biner yang rumit.
-2. **Kategori Perangkat & Peramban**: Dikelompokkan ke dalam kategori standar (mobile, tablet, desktop) dan peramban populer (Chrome, Firefox, Safari, Edge, Lainnya) tanpa fingerprinting perangkat tingkat rendah.
-3. **Keamanan & Ruang Lingkup**: Sistem dirancang strictly sebagai mesin perutean generik dan **tidak** memuat teknik manipulasi bot/crawler, manipulasi platform periklanan, atau cloaking.
+### 1. Database (Managed PostgreSQL)
+Gunakan penyedia PostgreSQL gratis seperti **Neon.tech**, **Supabase**, atau **Render PostgreSQL**. Ambil connection string yang diberikan untuk variabel `DATABASE_URL`.
+
+### 2. Backend (Golang)
+Dapat di-deploy ke **Render**, **Railway**, atau **Fly.io** menggunakan `backend/Dockerfile` yang sudah disediakan:
+1. Hubungkan repositori GitHub ke Render/Railway.
+2. Atur Root Directory ke `backend` (atau gunakan Dockerfile).
+3. Tambahkan Environment Variable:
+   - `DATABASE_URL`: Connection string PostgreSQL production.
+   - `FRONTEND_URL`: URL domain frontend production (misal `https://sivilize-demo.vercel.app`).
+   - `FALLBACK_URL`: `/demo/cadangan`.
+4. Jalankan migrasi sekali dengan menjalankan `go run cmd/migrasi/main.go` atau mengeksekusi DDL.
+
+### 3. Frontend (Next.js)
+Dapat di-deploy ke **Vercel**:
+1. Impor repositori GitHub di dashboard Vercel.
+2. Set Root Directory ke `frontend`.
+3. Tambahkan Environment Variable:
+   - `NEXT_PUBLIC_API_URL`: URL domain backend production (misal `https://sivilize-backend.up.railway.app`).
+4. Klik **Deploy**.
+
+---
+
+## Limitasi MVP
+
+1. **Simulasi Geolokasi**: Pada versi demo/MVP, penentuan negara pengunjung dimasukkan secara simulasi melalui antarmuka atau parameter masukan, bukan melalui basis data IP geolokasi biner offline yang berat.
+2. **Kategori Standar**: Perangkat dikelompokkan ke dalam kategori umum (`mobile`, `tablet`, `desktop`) dan peramban utama tanpa teknik *device fingerprinting* tingkat rendah.
+3. **Bukan Sistem Evasion**: Sistem ini strictly dirancang sebagai mesin demonstrasi perutean trafik berbasis aturan bisnis dan **tidak** memuat teknik manipulasi bot/crawler, manipulasi platform periklanan, atau cloaking.
