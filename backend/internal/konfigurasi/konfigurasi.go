@@ -1,7 +1,6 @@
 package konfigurasi
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -52,5 +51,5 @@ func MuatKonfigurasi() Konfigurasi {
 // MaskedUrlDatabase mengembalikan URL database tanpa menampilkan password.
 // Digunakan untuk logging agar credential tidak bocor ke log.
 func (k Konfigurasi) MaskedUrlDatabase() string {
-	return fmt.Sprintf("postgres://***@[host]/[database]")
+	return "postgres://***@[host]/[database]"
 }

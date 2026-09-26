@@ -410,6 +410,9 @@ func TestBatch8Compliance(t *testing.T) {
 				t.Errorf("Ditemukan data sensitif dalam tabel compliance_findings: %s", gabungan)
 			}
 		}
+		if err := rows.Err(); err != nil {
+			t.Errorf("Error saat membaca compliance_findings: %v", err)
+		}
 	})
 }
 

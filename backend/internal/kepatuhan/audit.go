@@ -124,6 +124,9 @@ func LakukanAuditKepatuhan(db *sql.DB) (model.HasilComplianceCheck, error) {
 			})
 		}
 	}
+	if err := rowsTujuan.Err(); err != nil {
+		return model.HasilComplianceCheck{}, fmt.Errorf("kesalahan saat membaca baris tujuan: %w", err)
+	}
 
 	// 2. Ambil seluruh data aturan (termasuk nonaktif untuk audit menyeluruh)
 	kueriAturan := `
@@ -142,20 +145,17 @@ func LakukanAuditKepatuhan(db *sql.DB) (model.HasilComplianceCheck, error) {
 
 	for rowsAturan.Next() {
 		var a model.Aturan
-		var ua, ref sql.NullString
-		if err := rowsAturan.Scan(&a.ID, &a.Nama, &a.Negara, &a.Perangkat, &a.Peramban, &ua, &ref, &a.TujuanID, &a.Prioritas, &a.Status); err != nil {
+		if err := rowsAturan.Scan(&a.ID, &a.Nama, &a.Negara, &a.Perangkat, &a.Peramban, &a.AgenPengguna, &a.AsalRujukan, &a.TujuanID, &a.Prioritas, &a.Status); err != nil {
 			return model.HasilComplianceCheck{}, fmt.Errorf("gagal membaca data aturan: %w", err)
 		}
-		a.AgenPengguna = ua
-		a.AsalRujukan = ref
 
 		uaStr := ""
-		if ua.Valid {
-			uaStr = strings.TrimSpace(ua.String)
+		if a.AgenPengguna.Valid {
+			uaStr = strings.TrimSpace(a.AgenPengguna.String)
 		}
 		refStr := ""
-		if ref.Valid {
-			refStr = strings.TrimSpace(ref.String)
+		if a.AsalRujukan.Valid {
+			refStr = strings.TrimSpace(a.AsalRujukan.String)
 		}
 
 		// Cek pemeriksaan 1 & 6: Menargetkan crawler/reviewer
@@ -211,6 +211,9 @@ func LakukanAuditKepatuhan(db *sql.DB) (model.HasilComplianceCheck, error) {
 			adaUARouting = true
 		}
 	}
+	if err := rowsAturan.Err(); err != nil {
+		return model.HasilComplianceCheck{}, fmt.Errorf("kesalahan saat membaca baris aturan: %w", err)
+	}
 
 	// Pemeriksaan 5: Jika ada routing berbasis UA secara umum
 	if adaUARouting {
@@ -247,13 +250,15 @@ func LakukanAuditKepatuhan(db *sql.DB) (model.HasilComplianceCheck, error) {
 			}
 		}
 
-		if totalChecklist > 0 && selesaiCount < totalChecklist {
-			temuan = append(temuan, model.TemuanCompliance{
-				Kode:    "CHECKLIST_PENDING",
-				Tingkat: "informasi",
-				Judul:   "Checklist kepatuhan internal belum selesai",
-				Pesan:   fmt.Sprintf("%d dari %d poin checklist kepatuhan manual belum ditandai oleh administrator. Lakukan verifikasi berkala terhadap operasional situs.", totalChecklist-selesaiCount, totalChecklist),
-			})
+		if err := rowsChecklist.Err(); err == nil {
+			if totalChecklist > 0 && selesaiCount < totalChecklist {
+				temuan = append(temuan, model.TemuanCompliance{
+					Kode:    "CHECKLIST_PENDING",
+					Tingkat: "informasi",
+					Judul:   "Checklist kepatuhan internal belum selesai",
+					Pesan:   fmt.Sprintf("%d dari %d poin checklist kepatuhan manual belum ditandai oleh administrator. Lakukan verifikasi berkala terhadap operasional situs.", totalChecklist-selesaiCount, totalChecklist),
+				})
+			}
 		}
 	}
 
@@ -334,6 +339,9 @@ func AmbilChecklist(db *sql.DB) ([]model.ItemChecklistCompliance, error) {
 		}
 		items = append(items, item)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("kesalahan saat membaca baris checklist: %w", err)
+	}
 	return items, nil
 }
 
@@ -372,6 +380,9 @@ func AmbilRiwayatAudit(db *sql.DB, limit int) ([]model.AuditCompliance, error) {
 		}
 		daftar = append(daftar, a)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("kesalahan saat membaca baris audit: %w", err)
+	}
 
 	// Isi temuan untuk setiap audit
 	for i := range daftar {
@@ -387,6 +398,7 @@ func AmbilRiwayatAudit(db *sql.DB, limit int) ([]model.AuditCompliance, error) {
 				findings = append(findings, f)
 			}
 		}
+		_ = fRows.Err()
 		fRows.Close()
 		daftar[i].Temuan = findings
 	}
