@@ -381,33 +381,77 @@ export default function DashboardUtama() {
       )}
 
       {/* 4. Tab Navigasi Utama */}
-      <div className="border-b border-slate-800 bg-slate-900/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex overflow-x-auto scrollbar-none gap-2 py-2">
+      <div className="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex overflow-x-auto scrollbar-none gap-2 py-2.5">
           {[
-            { id: "ikhtisar", label: "Ikhtisar & Sistem", icon: "📊" },
-            { id: "tujuan", label: `Tujuan (${daftarTujuan.length})`, icon: "🎯" },
-            { id: "aturan", label: `Aturan (${daftarAturan.length})`, icon: "⚡" },
-            { id: "uji", label: "Simulator Uji Trafik", icon: "🧪" },
-            { id: "log", label: `Log Trafik (${paginasiLog.total})`, icon: "📜" },
+            {
+              id: "ikhtisar",
+              label: "Ikhtisar & Sistem",
+              icon: (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+              ),
+            },
+            {
+              id: "tujuan",
+              label: `Tujuan (${daftarTujuan.length})`,
+              icon: (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 7v5l3 3" />
+                </svg>
+              ),
+            },
+            {
+              id: "aturan",
+              label: `Aturan (${daftarAturan.length})`,
+              icon: (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 0v3.75m6-13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 0v3.75m6-7.5V3.75m0 5.25a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 0v9.75" />
+                </svg>
+              ),
+            },
+            {
+              id: "uji",
+              label: "Simulator Uji Trafik",
+              icon: (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                </svg>
+              ),
+            },
+            {
+              id: "log",
+              label: `Log Trafik (${paginasiLog.total})`,
+              icon: (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+              ),
+            },
           ].map((item) => (
             <button
               key={item.id}
               onClick={() => setTabAktif(item.id as TabMenu)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all flex items-center gap-2.5 cursor-pointer ${
                 tabAktif === item.id
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                  ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/30"
+                  : "text-slate-400 hover:text-slate-100 hover:bg-slate-900/80 border border-transparent"
               }`}
             >
               <span>{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
+
           <Link
             href="/compliance"
-            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 border border-emerald-500/20 ml-auto"
+            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all flex items-center gap-2.5 text-emerald-300 hover:text-emerald-100 bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-500/30 ml-auto shadow-sm"
           >
-            <span>🛡️</span>
+            <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
             <span>Kepatuhan (AdSense)</span>
           </Link>
         </div>
@@ -418,72 +462,72 @@ export default function DashboardUtama() {
         {/* TAB 1: IKHTISAR & SISTEM */}
         {tabAktif === "ikhtisar" && (
           <div className="space-y-8">
-            {/* 1. Stat Telemetry Cards */}
+            {/* 1. Stat Telemetry Cards - Vibrant Multi-color Harmonies */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Card 1: Tujuan */}
-              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-indigo-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-indigo-400"></div>
+              {/* Card 1: Tujuan (Electric Cyan) */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-cyan-500/60 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Halaman Tujuan</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
                     TARGETS
                   </span>
                 </div>
-                <p className="text-3xl font-extrabold text-white mt-2 tracking-tight">{daftarTujuan.length}</p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                <p className="text-3xl font-extrabold text-cyan-300 mt-2 tracking-tight">{daftarTujuan.length}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
                   <span className="text-slate-300 text-xs font-medium">Halaman landing aktif terdaftar</span>
                 </div>
               </div>
 
-              {/* Card 2: Aturan Aktif */}
-              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-emerald-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
+              {/* Card 2: Aturan Aktif (Warm Amber / Sunset Gold) */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-amber-500/60 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500"></div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Aturan Evaluasi</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
                     ACTIVE RULES
                   </span>
                 </div>
-                <p className="text-3xl font-extrabold text-emerald-400 mt-2 tracking-tight">
+                <p className="text-3xl font-extrabold text-amber-400 mt-2 tracking-tight">
                   {daftarAturan.filter((a) => a.status).length} <span className="text-slate-400 text-lg font-normal">/ {daftarAturan.length}</span>
                 </p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                   <span className="text-slate-300 text-xs font-medium">Rule Engine siap evaluasi prioritas</span>
                 </div>
               </div>
 
-              {/* Card 3: Total Log */}
-              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-sky-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-sky-400"></div>
+              {/* Card 3: Total Log (Vibrant Violet / Royal Indigo) */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-violet-500/60 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 to-indigo-500"></div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Riwayat Log Trafik</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-300 border border-sky-500/20">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/15 text-violet-300 border border-violet-500/30">
                     AUDIT SINK
                   </span>
                 </div>
-                <p className="text-3xl font-extrabold text-sky-400 mt-2 tracking-tight">{paginasiLog.total}</p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
+                <p className="text-3xl font-extrabold text-violet-300 mt-2 tracking-tight">{paginasiLog.total}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
                   <span className="text-slate-300 text-xs font-medium">Tercatat di tabel traffic_logs</span>
                 </div>
               </div>
 
-              {/* Card 4: Status Database */}
-              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-teal-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${backendTerhubung ? "from-teal-500 to-emerald-400" : "from-rose-500 to-rose-400"}`}></div>
+              {/* Card 4: Status Database (Emerald Mint) */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-emerald-500/60 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${backendTerhubung ? "from-emerald-400 to-teal-400" : "from-rose-500 to-rose-400"}`}></div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Koneksi Database</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${backendTerhubung ? "bg-teal-500/10 text-teal-300 border-teal-500/20" : "bg-rose-500/10 text-rose-300 border-rose-500/20"}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${backendTerhubung ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" : "bg-rose-500/15 text-rose-300 border-rose-500/30"}`}>
                     {backendTerhubung ? "CONNECTED" : "OFFLINE"}
                   </span>
                 </div>
-                <p className={`text-2xl font-extrabold mt-2 tracking-tight ${backendTerhubung ? "text-teal-300" : "text-rose-400"}`}>
+                <p className={`text-2xl font-extrabold mt-2 tracking-tight ${backendTerhubung ? "text-emerald-300" : "text-rose-400"}`}>
                   {backendTerhubung ? "PostgreSQL 17" : "Terputus"}
                 </p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <span className={`h-1.5 w-1.5 rounded-full ${backendTerhubung ? "bg-teal-400" : "bg-rose-500"}`}></span>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`h-1.5 w-1.5 rounded-full ${backendTerhubung ? "bg-emerald-400 animate-pulse" : "bg-rose-500"}`}></span>
                   <span className="text-slate-300 text-xs font-medium">
                     {backendTerhubung ? "Port 5432 • ACID Logged" : "Periksa koneksi backend"}
                   </span>
@@ -491,13 +535,13 @@ export default function DashboardUtama() {
               </div>
             </div>
 
-            {/* 2. Arsitektur Pipeline Alur Keputusan Trafik */}
+            {/* 2. Arsitektur Pipeline Alur Keputusan Trafik - Multi-color Sequential Spectrum */}
             <div className="bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-950 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
               {/* Header Pipeline */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-emerald-500/20 text-cyan-300 border border-cyan-500/30">
                       PIPELINE ARCHITECTURE
                     </span>
                     <span className="text-slate-500">•</span>
@@ -510,153 +554,203 @@ export default function DashboardUtama() {
                     Setiap permintaan trafik yang masuk diproses secara berurutan dan deterministik dari analisis konteks hingga persistensi log:
                   </p>
                 </div>
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-xs text-slate-200 self-start sm:self-auto shadow-inner">
+                <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-slate-950/90 border border-slate-700/80 text-xs text-slate-200 self-start sm:self-auto shadow-inner">
                   <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
                   <span className="font-semibold text-white">5 Tahap Eksekusi</span>
-                  <span className="text-slate-400">|</span>
-                  <span className="text-indigo-300 font-mono font-medium">&lt; 2ms latency</span>
+                  <span className="text-slate-500">|</span>
+                  <span className="text-cyan-300 font-mono font-medium">&lt; 2ms latency</span>
                 </div>
               </div>
 
-              {/* 5-Step Connected Pipeline Cards */}
+              {/* 5-Step Connected Pipeline Cards with Unique Color Accents and Vector SVG Icons */}
               <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5 pt-6 relative">
-                {/* Step 1 */}
-                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                {/* Step 1: Ingress (Electric Cyan) */}
+                <div className="bg-slate-950/90 border border-slate-800 hover:border-cyan-400/70 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-t-xl"></div>
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 text-[11px] font-bold font-mono border border-cyan-500/30">
                         STEP 01
                       </span>
-                      <span className="text-lg" title="Ingress">🌐</span>
+                      <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-cyan-300 transition-colors">
                       Permintaan Masuk
                     </h3>
-                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-cyan-950/60 mt-2.5">
                       <p className="text-slate-200 text-xs font-medium leading-relaxed">
                         Ekstraksi metadata HTTP: IP klien, User-Agent, Referer, dan resolusi GeoIP negara.
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-indigo-300 font-medium">Inbound Ingest</span>
+                  <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-cyan-300 font-medium">Inbound Ingest</span>
                     <span className="text-slate-400 font-mono">Layer 7</span>
                   </div>
                 </div>
 
-                {/* Step 2 */}
-                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                {/* Step 2: Analyzer (Vibrant Violet) */}
+                <div className="bg-slate-950/90 border border-slate-800 hover:border-violet-400/70 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 to-purple-500 rounded-t-xl"></div>
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="px-2 py-0.5 rounded bg-violet-500/15 text-violet-300 text-[11px] font-bold font-mono border border-violet-500/30">
                         STEP 02
                       </span>
-                      <span className="text-lg" title="Request Analyzer">🔍</span>
+                      <div className="p-1.5 rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <rect x="4" y="4" width="16" height="16" rx="2" />
+                          <rect x="9" y="9" width="6" height="6" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 1v3m6-3v3M9 20v3m6-3v3M20 9h3m-3 6h3M1 9h3m-3 6h3" />
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-violet-300 transition-colors">
                       Request Analyzer
                     </h3>
-                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-violet-950/60 mt-2.5">
                       <p className="text-slate-200 text-xs font-medium leading-relaxed">
                         Klasifikasi tipe perangkat (mobile, tablet, desktop) serta normalisasi jenis peramban.
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-indigo-300 font-medium">Context Normalizer</span>
+                  <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-violet-300 font-medium">Context Normalizer</span>
                     <span className="text-slate-400 font-mono">Regex Engine</span>
                   </div>
                 </div>
 
-                {/* Step 3 */}
-                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                {/* Step 3: Rule Engine (Warm Amber / Gold) */}
+                <div className="bg-slate-950/90 border border-slate-800 hover:border-amber-400/70 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-t-xl"></div>
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 text-[11px] font-bold font-mono border border-amber-500/30">
                         STEP 03
                       </span>
-                      <span className="text-lg" title="Rule Engine">⚡</span>
+                      <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-amber-300 transition-colors">
                       Rule Engine
                     </h3>
-                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-amber-950/60 mt-2.5">
                       <p className="text-slate-200 text-xs font-medium leading-relaxed">
                         Evaluasi multi-kondisi berurutan dari prioritas tertinggi ke terendah secara deterministik.
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-indigo-300 font-medium">Priority Matching</span>
+                  <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-amber-300 font-medium">Priority Matching</span>
                     <span className="text-slate-400 font-mono">Skor 1 - 100</span>
                   </div>
                 </div>
 
-                {/* Step 4 */}
-                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                {/* Step 4: Dispatcher (Vivid Rose / Coral) */}
+                <div className="bg-slate-950/90 border border-slate-800 hover:border-rose-400/70 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-rose-500 to-pink-500 rounded-t-xl"></div>
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 text-[11px] font-bold font-mono border border-rose-500/30">
                         STEP 04
                       </span>
-                      <span className="text-lg" title="Route Dispatcher">🎯</span>
+                      <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-.75m0-3.75l4.5 4.5m0-4.5l-4.5 4.5M12 3v9m0 0l3-3m-3 3L9 9" />
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-rose-300 transition-colors">
                       Penentuan Tujuan
                     </h3>
-                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-rose-950/60 mt-2.5">
                       <p className="text-slate-200 text-xs font-medium leading-relaxed">
                         Memilih URL halaman tujuan aturan atau mengarahkan ke fallback default jika tidak ada kecocokan.
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-indigo-300 font-medium">Target / Fallback</span>
+                  <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-rose-300 font-medium">Target / Fallback</span>
                     <span className="text-slate-400 font-mono">Routing Matrix</span>
                   </div>
                 </div>
 
-                {/* Step 5 */}
-                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                {/* Step 5: Logging (Emerald Mint) */}
+                <div className="bg-slate-950/90 border border-slate-800 hover:border-emerald-400/70 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-t-xl"></div>
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 text-[11px] font-bold font-mono border border-emerald-500/30">
                         STEP 05
                       </span>
-                      <span className="text-lg" title="Logging Sink">💾</span>
+                      <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <ellipse cx="12" cy="5" rx="9" ry="3" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                        </svg>
+                      </div>
                     </div>
-                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-emerald-300 transition-colors">
                       Traffic Logging
                     </h3>
-                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-emerald-950/60 mt-2.5">
                       <p className="text-slate-200 text-xs font-medium leading-relaxed">
                         Penyimpanan seluruh jejak audit evaluasi secara real-time ke tabel PostgreSQL traffic_logs.
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-indigo-300 font-medium">Audit Trail</span>
+                  <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-emerald-300 font-medium">Audit Trail</span>
                     <span className="text-slate-400 font-mono">ACID Logged</span>
                   </div>
                 </div>
               </div>
 
-              {/* Technical Specifications Bar */}
+              {/* Technical Specifications Ribbon */}
               <div className="mt-6 pt-5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                 <div className="flex items-center gap-2 text-slate-300">
-                  <span className="text-indigo-400 font-bold">⚡ Latensi:</span>
+                  <div className="p-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <span className="text-cyan-400 font-bold">Latensi:</span>
                   <span className="font-mono text-white">&lt; 2ms Overhead</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-300">
-                  <span className="text-emerald-400 font-bold">🛡️ Kepatuhan:</span>
+                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-emerald-400 font-bold">Kepatuhan:</span>
                   <span className="text-white">AdSense Safe Guard</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-300">
-                  <span className="text-sky-400 font-bold">🔁 Fallback:</span>
-                  <span className="text-white">Graceful Fallback</span>
+                  <div className="p-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                  </div>
+                  <span className="text-amber-400 font-bold">Fallback:</span>
+                  <span className="text-white">Graceful Routing</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-300">
-                  <span className="text-purple-400 font-bold">📜 Audit Sink:</span>
+                  <div className="p-1 rounded bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                    </svg>
+                  </div>
+                  <span className="text-violet-400 font-bold">Audit Sink:</span>
                   <span className="font-mono text-white">PostgreSQL 100%</span>
                 </div>
               </div>
@@ -1167,8 +1261,11 @@ export default function DashboardUtama() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-slate-300 font-medium">
-            <Link href="/compliance" className="text-emerald-400 hover:text-emerald-300 transition-colors">
-              🛡️ Kebijakan Kepatuhan AdSense
+            <Link href="/compliance" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Kebijakan Kepatuhan AdSense</span>
             </Link>
             <span className="text-slate-600">•</span>
             <a
