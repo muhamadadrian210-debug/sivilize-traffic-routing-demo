@@ -147,15 +147,27 @@ export default function DashboardUtama() {
     }
 
     setMemuatAksi(true);
+    if (!formTujuan.nama || !formTujuan.url) {
+      tampilkanNotifikasi("error", "Nama dan URL tujuan wajib diisi");
+      return;
+    }
+
+    let urlBersih = formTujuan.url.trim();
+    // Jika user menginputkan domain tanpa protokol (seperti google.com), otomatis tambahkan https://
+    if (!urlBersih.startsWith("http://") && !urlBersih.startsWith("https://") && !urlBersih.startsWith("/")) {
+      urlBersih = "https://" + urlBersih;
+    }
+
+    setMemuatAksi(true);
     try {
       const res = await fetch(`${urlBackend}/api/tujuan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nama: formTujuan.nama, url: formTujuan.url, status: true }),
+        body: JSON.stringify({ nama: formTujuan.nama, url: urlBersih, status: true }),
       });
       const data = await res.json();
       if (res.ok) {
-        tampilkanNotifikasi("sukses", `Tujuan '${formTujuan.nama}' berhasil ditambahkan`);
+        tampilkanNotifikasi("sukses", `Tujuan '${formTujuan.nama}' berhasil ditambahkan (${urlBersih})`);
         setFormTujuan({ nama: "", url: "" });
         muatTujuan();
       } else {
@@ -776,15 +788,20 @@ export default function DashboardUtama() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">URL / Path Tujuan</label>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1">
+                    URL / Alamat Website Tujuan
+                  </label>
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: /demo/promo-a"
+                    placeholder="Contoh: https://google.com atau https://tokopedia.com"
                     value={formTujuan.url}
                     onChange={(e) => setFormTujuan({ ...formTujuan, url: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 font-mono"
                   />
+                  <span className="text-[11px] text-slate-400 mt-1 block">
+                    Bisa berupa URL website eksternal mana pun (otomatis diawali https:// jika belum ada).
+                  </span>
                 </div>
                 <button
                   type="submit"
@@ -809,7 +826,7 @@ export default function DashboardUtama() {
                     <tr>
                       <th className="py-3 px-4">ID</th>
                       <th className="py-3 px-4">Nama</th>
-                      <th className="py-3 px-4">URL</th>
+                      <th className="py-3 px-4">URL Tujuan Nyata</th>
                       <th className="py-3 px-4">Status</th>
                       <th className="py-3 px-4 text-right">Aksi</th>
                     </tr>
@@ -826,7 +843,20 @@ export default function DashboardUtama() {
                         <tr key={t.id} className="hover:bg-slate-800/40">
                           <td className="py-3 px-4 text-slate-400 font-mono">{t.id}</td>
                           <td className="py-3 px-4 font-semibold text-white">{t.nama}</td>
-                          <td className="py-3 px-4 font-mono text-indigo-300">{t.url}</td>
+                          <td className="py-3 px-4 font-mono text-cyan-300">
+                            <a
+                              href={t.url.startsWith("http") ? t.url : `https://${t.url}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline inline-flex items-center gap-1.5 text-cyan-300 hover:text-cyan-200"
+                              title="Buka Website Tujuan Langsung"
+                            >
+                              <span className="truncate max-w-[200px] sm:max-w-[280px]">{t.url}</span>
+                              <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-white flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                              </svg>
+                            </a>
+                          </td>
                           <td className="py-3 px-4">
                             <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${t.status ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-800 text-slate-400"}`}>
                               {t.status ? "Aktif" : "Nonaktif"}
@@ -1127,7 +1157,7 @@ export default function DashboardUtama() {
                     <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-slate-400">URL Tujuan Terpilih:</span>
-                        <code className="text-indigo-400 font-mono font-bold text-sm bg-indigo-950/50 px-2 py-1 rounded">
+                        <code className="text-cyan-300 font-mono font-bold text-sm bg-cyan-950/40 border border-cyan-800/40 px-2 py-1 rounded">
                           {hasilRouting.url_tujuan}
                         </code>
                       </div>
@@ -1140,12 +1170,77 @@ export default function DashboardUtama() {
                         <span className="text-slate-200 font-mono">{hasilRouting.tujuan_id ?? "Fallback (NULL)"}</span>
                       </div>
                     </div>
+
+                    {/* Tombol Aksi Nyata (Bukan Cuma Simulasi) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                      <a
+                        href={hasilRouting.url_tujuan.startsWith("http") ? hasilRouting.url_tujuan : `https://${hasilRouting.url_tujuan}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/25"
+                      >
+                        <span>Buka Website Nyata ↗</span>
+                      </a>
+                      <a
+                        href={`/r?negara=${encodeURIComponent(formUji.negara)}&perangkat=${encodeURIComponent(formUji.perangkat)}&peramban=${encodeURIComponent(formUji.peramban)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2.5 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 border border-cyan-500/20 transition-all"
+                      >
+                        <span>Uji Pengalihan Nyata (/r) ↗</span>
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <div className="py-16 text-center text-slate-500 text-xs">
                     Isi parameter simulasi di sebelah kiri dan klik tombol <strong>Periksa Trafik</strong> untuk melihat hasil.
                   </div>
                 )}
+              </div>
+
+              {/* Tautan Gateway Routing Nyata */}
+              <div className="mt-6 pt-5 border-t border-slate-800/80">
+                <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      Tautan Gateway Routing Nyata (Live Router)
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                      HTTP 302 REDIRECT
+                    </span>
+                  </div>
+                  <p className="text-slate-300 text-xs leading-relaxed">
+                    Bagikan tautan ini ke pengunjung atau gunakan di website Anda. Setiap pengunjung riil yang membuka tautan ini akan langsung dianalisis dan dialihkan ke website tujuan yang cocok secara otomatis:
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={typeof window !== "undefined" ? `${window.location.origin}/r` : "/r"}
+                      className="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-cyan-300 font-mono select-all focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const url = typeof window !== "undefined" ? `${window.location.origin}/r` : "/r";
+                        navigator.clipboard.writeText(url);
+                        tampilkanNotifikasi("sukses", "Tautan gateway live berhasil disalin ke clipboard!");
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold whitespace-nowrap transition cursor-pointer"
+                    >
+                      Salin Link
+                    </button>
+                    <a
+                      href="/r"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold whitespace-nowrap transition"
+                    >
+                      Buka Gateway ↗
+                    </a>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500">

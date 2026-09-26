@@ -198,3 +198,98 @@ func PeriksaTrafik(db *sql.DB, urlFallback string) gin.HandlerFunc {
 		})
 	}
 }
+
+// GatewayRedirect menangani GET /r dan GET /api/r untuk pengalihan trafik pengunjung riil secara langsung.
+// Handler ini membaca User-Agent, Referer, dan IP riil dari browser, mengevaluasi aturan di basis data,
+// menyimpan catatan riwayat ke traffic_logs, lalu melakukan HTTP 302 Found Redirect ke URL tujuan nyata.
+func GatewayRedirect(db *sql.DB, urlFallback string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userAgent := c.Request.UserAgent()
+		referer := c.Request.Referer()
+		ip := c.ClientIP()
+		negaraQuery := c.Query("negara")
+
+		konteks := aturan.AnalisisPermintaan(userAgent, referer, ip, negaraQuery)
+
+		// Overrides opsional dari query string untuk pengujian langsung via URL
+		if dev := c.Query("perangkat"); dev != "" {
+			konteks.Perangkat = aturan.NormalisasiPerangkat(dev)
+		}
+		if brw := c.Query("peramban"); brw != "" {
+			konteks.Peramban = aturan.NormalisasiPeramban(brw)
+		}
+
+		hasil, err := aturan.EvaluasiDenganBasisData(db, konteks, urlFallback)
+		if err != nil {
+			targetFB := urlFallback
+			if targetFB == "" {
+				targetFB = "/"
+			}
+			c.Redirect(http.StatusFound, targetFB)
+			return
+		}
+
+		// Simpan jejak audit ke tabel traffic_logs
+		var negaraVal, perangkatVal, perambanVal, agenPenggunaVal, asalRujukanVal sql.NullString
+		if konteks.Negara != "" {
+			negaraVal = sql.NullString{String: konteks.Negara, Valid: true}
+		}
+		if konteks.Perangkat != "" {
+			perangkatVal = sql.NullString{String: konteks.Perangkat, Valid: true}
+		}
+		if konteks.Peramban != "" {
+			perambanVal = sql.NullString{String: konteks.Peramban, Valid: true}
+		}
+		if konteks.AgenPengguna != "" {
+			agenPenggunaVal = sql.NullString{String: konteks.AgenPengguna, Valid: true}
+		}
+		if konteks.AsalRujukan != "" {
+			asalRujukanVal = sql.NullString{String: konteks.AsalRujukan, Valid: true}
+		}
+
+		var aturanIDVal, tujuanIDVal sql.NullInt64
+		if hasil.AturanID != nil {
+			aturanIDVal = sql.NullInt64{Int64: int64(*hasil.AturanID), Valid: true}
+		}
+		if hasil.TujuanID != nil {
+			tujuanIDVal = sql.NullInt64{Int64: int64(*hasil.TujuanID), Valid: true}
+		}
+
+		kueriSimpanLog := `
+			INSERT INTO traffic_logs (
+				negara, perangkat, peramban, agen_pengguna, asal_rujukan,
+				aturan_id, tujuan_id, url_tujuan, hasil, dibuat_pada
+			)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+		`
+		_, _ = db.Exec(
+			kueriSimpanLog,
+			negaraVal,
+			perangkatVal,
+			perambanVal,
+			agenPenggunaVal,
+			asalRujukanVal,
+			aturanIDVal,
+			tujuanIDVal,
+			hasil.URLTujuan,
+			hasil.Hasil,
+		)
+
+		// Jika klien meminta respon JSON
+		if c.Query("format") == "json" {
+			c.JSON(http.StatusOK, gin.H{
+				"data": hasil,
+			})
+			return
+		}
+
+		targetURL := strings.TrimSpace(hasil.URLTujuan)
+		// Jika URL tujuan adalah alamat website eksternal tanpa skema (misal google.com), tambahkan https://
+		if !strings.HasPrefix(targetURL, "http://") && !strings.HasPrefix(targetURL, "https://") && !strings.HasPrefix(targetURL, "/") {
+			targetURL = "https://" + targetURL
+		}
+
+		// Lakukan pengalihan HTTP nyata ke web tujuan
+		c.Redirect(http.StatusFound, targetURL)
+	}
+}

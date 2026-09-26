@@ -37,11 +37,17 @@ func main() {
 	// Endpoint health check publik
 	mesin.GET("/health", penangan.PeriksaKesehatan(db))
 
+	// Gateway Pengalihan Langsung Riil (Live Traffic Routing Gateway)
+	mesin.GET("/r", penangan.GatewayRedirect(db, konf.UrlFallback))
+
 	api := mesin.Group("/api")
 	{
 		// Pemeriksaan kesehatan
 		api.GET("/kesehatan", penangan.PeriksaKesehatan(db))
 		api.GET("/health", penangan.PeriksaKesehatan(db))
+
+		// Gateway Pengalihan Langsung Riil
+		api.GET("/r", penangan.GatewayRedirect(db, konf.UrlFallback))
 
 		// CRUD Tujuan
 		api.GET("/tujuan", penangan.DaftarTujuan(db))
