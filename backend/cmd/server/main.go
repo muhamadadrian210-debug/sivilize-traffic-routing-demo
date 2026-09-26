@@ -62,6 +62,12 @@ func main() {
 		api.POST("/periksa", penangan.PeriksaTrafik(db, konf.UrlFallback))
 		api.GET("/log-trafik", penangan.DaftarLogTrafik(db))
 		api.GET("/log-trafik/:id", penangan.SatuLogTrafik(db))
+
+		// Google AdSense & Publisher Compliance (Batch 8)
+		api.GET("/compliance/check", penangan.PeriksaCompliance(db))
+		api.GET("/compliance/checklist", penangan.AmbilChecklistCompliance(db))
+		api.PUT("/compliance/checklist", penangan.UbahChecklistCompliance(db))
+		api.GET("/compliance/audits", penangan.RiwayatAuditCompliance(db))
 	}
 
 	log.Printf("Server Sivilize Traffic Routing Demo berjalan pada port :%s", konf.Port)

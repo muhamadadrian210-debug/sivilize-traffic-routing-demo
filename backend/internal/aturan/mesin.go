@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"sivilize-traffic-routing-demo/backend/internal/kepatuhan"
 	"sivilize-traffic-routing-demo/backend/internal/model"
 )
 
@@ -25,6 +26,13 @@ type HasilRouting struct {
 func CocokkanAturan(a model.Aturan, k KonteksPengunjung) bool {
 	// 1. Hanya aturan dengan status aktif yang dievaluasi
 	if !a.Status {
+		return false
+	}
+
+	// 1.1 Kepatuhan Google Publisher (Batch 8):
+	// Jangan jalankan aturan yang secara eksplisit menargetkan crawler/reviewer Google/AdSense
+	// untuk mencegah mekanisme cloaking, bot evasion, atau manipulasi peninjauan iklan.
+	if kepatuhan.MenargetkanCrawlerAturan(a) {
 		return false
 	}
 

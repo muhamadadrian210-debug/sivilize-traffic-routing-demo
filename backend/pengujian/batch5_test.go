@@ -142,6 +142,14 @@ func TestBatch5EndpointPeriksaDanLog(t *testing.T) {
 		t.Fatalf("Gagal membuat aturan 3: %v", err)
 	}
 
+	// Pastikan ada aturan ID Mobile khusus pengujian B5 (prioritas 5)
+	namaAturanID := fmt.Sprintf("Aturan B5 ID Mobile %d", os.Getpid())
+	_, _ = db.Exec(`
+		INSERT INTO aturan (nama, negara, perangkat, prioritas, status, tujuan_id)
+		VALUES ($1, 'ID', 'mobile', 5, true, $2)
+		ON CONFLICT DO NOTHING
+	`, namaAturanID, idTujuanA)
+
 	t.Cleanup(func() {
 		db.Exec("DELETE FROM traffic_logs WHERE aturan_id IN ($1, $2, $3)", idAturan1, idAturan2, idAturan3)
 		db.Exec("DELETE FROM traffic_logs WHERE negara IN ('MY', 'SG', 'ZZ', 'US', 'JP', 'ID')")

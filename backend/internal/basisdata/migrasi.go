@@ -66,5 +66,10 @@ CREATE INDEX IF NOT EXISTS idx_catatan_trafik_perangkat   ON catatan_trafik(pera
 		return fmt.Errorf("gagal menjalankan migrasi traffic_logs: %w", err)
 	}
 
+	// Jalankan migrasi tabel kepatuhan compliance (Batch 8)
+	if err := JalankanMigrasiCompliance(db); err != nil {
+		return fmt.Errorf("gagal menjalankan migrasi compliance: %w", err)
+	}
+
 	return nil
 }

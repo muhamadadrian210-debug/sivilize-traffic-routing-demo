@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { DataKesehatan } from "@/tipe/kesehatan";
 import { Tujuan, Aturan, HasilRouting, LogTrafik, InfoPaginasi } from "@/tipe/entitas";
 import { dapatkanUrlApi } from "@/pustaka/api";
@@ -56,7 +57,6 @@ export default function DashboardUtama() {
 
   // 1. Periksa Kesehatan Backend
   async function periksaKesehatan() {
-    setMemuatKesehatan(true);
     try {
       const res = await fetch(`${urlBackend}/health`, {
         method: "GET",
@@ -124,10 +124,11 @@ export default function DashboardUtama() {
 
   // Muat data awal saat halaman pertama kali dibuka
   useEffect(() => {
-    periksaKesehatan();
-    muatTujuan();
-    muatAturan();
-    muatLog(1);
+    void periksaKesehatan();
+    void muatTujuan();
+    void muatAturan();
+    void muatLog(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function tampilkanNotifikasi(tipe: "sukses" | "error", pesan: string) {
@@ -402,6 +403,13 @@ export default function DashboardUtama() {
               <span>{item.label}</span>
             </button>
           ))}
+          <Link
+            href="/compliance"
+            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 border border-emerald-500/20 ml-auto"
+          >
+            <span>🛡️</span>
+            <span>Kepatuhan (AdSense)</span>
+          </Link>
         </div>
       </div>
 

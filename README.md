@@ -189,6 +189,49 @@ Dapat di-deploy ke **Vercel**:
 
 ---
 
+## Google AdSense & Publisher Compliance
+
+Sistem **Sivilize Traffic Routing Demo** dilengkapi dengan modul audit dan kepatuhan internal terhadap kebijakan Google Publisher & Google AdSense.
+
+### Pernyataan Kepatuhan & Tanggung Jawab
+
+- **Demo Routing Generik**: Sistem ini merupakan generic traffic routing demo (*Proof of Concept*) untuk keperluan optimasi pengalaman pengguna dan kebutuhan bisnis yang sah (seperti A/B testing, segmentasi bahasa/negara, dan adaptasi tata letak perangkat).
+- **Tanggung Jawab Administrator**: Administrator dan pemilik situs bertanggung jawab penuh terhadap segala konfigurasi aturan, konten tujuan, serta kualitas sumber trafik yang diarahkan.
+- **Bukan Sistem Cloaking atau Evasion**: Sistem ini **tidak dirancang** dan **tidak boleh digunakan** untuk:
+  - Mengelabui crawler atau sistem review iklan Google;
+  - Menampilkan halaman berbeda kepada crawler/reviewer dibanding pengguna untuk menghindari peninjauan;
+  - Melakukan bot evasion atau fingerprinting agresif;
+  - Menyembunyikan trafik tidak valid (*invalid traffic*);
+  - Memanipulasi penargetan iklan demi meningkatkan RPM/CPC secara artifisial.
+- **Aturan Perlindungan Otomatis**: Jika ada aturan routing yang secara eksplisit menargetkan crawler/reviewer Google (seperti Googlebot, AdsBot, Mediapartners-Google), sistem otomatis menandainya sebagai risiko tinggi dan **tidak akan menjalankan routing khusus tersebut** demi mencegah pelanggaran cloaking.
+- **Tidak Ada Jaminan Kepatuhan Resmi**: Sistem **tidak memberikan jaminan** kepatuhan resmi ("Google Approved", "100% AdSense Compliant", atau "Guaranteed Safe"). Status kepatuhan internal yang dihasilkan (`aman`, `perlu_ditinjau`, `berisiko`) dengan skor `null` merupakan estimasi diagnostik internal, bukan keputusan resmi dari Google LLC.
+- **Kebijakan Bersifat Dinamis**: Kebijakan Google dapat berubah sewaktu-waktu. Pengguna dan pengelola situs wajib selalu membaca serta mematuhi dokumentasi kebijakan resmi Google sebelum mengaktifkan periklanan AdSense.
+
+### Referensi Resmi Kebijakan Google
+
+1. [Kebijakan Program Google AdSense](https://support.google.com/adsense/answer/48182)
+2. [Panduan Kualitas Lalu Lintas Iklan (Traffic Quality Guidelines)](https://support.google.com/adsense/answer/2660562)
+3. [Panduan Penempatan Iklan (Ad Placement Policies)](https://support.google.com/adsense/answer/16737)
+4. [Kebijakan Google Publisher (Publisher Policies)](https://support.google.com/publisherpolicies/answer/10502938)
+
+### Endpoint Kepatuhan (Batch 8 API)
+
+- `GET /api/compliance/check`: Menjalankan 7 lapisan audit kepatuhan internal tanpa menghubungi server Google luar, menghasilkan status (`aman` | `perlu_ditinjau` | `berisiko`), skor `null`, ringkasan metrik, serta menyimpan riwayat ke tabel `compliance_audits` & `compliance_findings`.
+- `GET /api/compliance/checklist`: Mengambil daftar 11 item checklist kepatuhan manual dari basis data.
+- `PUT /api/compliance/checklist`: Memperbarui status checklist kepatuhan mandiri oleh administrator.
+- `GET /api/compliance/audits`: Mengambil riwayat catatan audit kepatuhan sebelumnya.
+
+### Dasbor Kepatuhan (`/compliance`)
+
+Antarmuka web interaktif yang menyajikan:
+- Status audit terkini dengan badge warna informatif;
+- Ringkasan temuan berdasarkan tingkat keparahan (*informasi*, *peringatan*, *risiko tinggi*);
+- Rincian kartu temuan lengkap dengan kode identifikasi kebijakan;
+- 11 item checklist mandiri administrator yang tersimpan di basis data secara real-time;
+- Ringkasan dokumentasi kebijakan AdSense beserta tautan rujukan resmi Google.
+
+---
+
 ## Limitasi MVP
 
 1. **Simulasi Geolokasi**: Pada versi demo/MVP, penentuan negara pengunjung dimasukkan secara simulasi melalui antarmuka atau parameter masukan, bukan melalui basis data IP geolokasi biner offline yang berat.

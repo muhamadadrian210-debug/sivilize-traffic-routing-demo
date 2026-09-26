@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"sivilize-traffic-routing-demo/backend/internal/kepatuhan"
 	"sivilize-traffic-routing-demo/backend/internal/model"
 )
 
@@ -328,9 +329,14 @@ func BuatAturan(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
+		resp := gin.H{
 			"data": hasil,
-		})
+		}
+		if kepatuhan.MenargetkanCrawlerReviewer(namaBersih, agenPenggunaVal.String, asalRujukanVal.String) {
+			resp["peringatan"] = "Aturan ini perlu ditinjau karena membedakan pengunjung berdasarkan identitas crawler/reviewer dapat digunakan untuk menghindari pemeriksaan atau kebijakan platform."
+		}
+
+		c.JSON(http.StatusCreated, resp)
 	}
 }
 
@@ -524,9 +530,14 @@ func UbahAturan(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
+		resp := gin.H{
 			"data": hasil,
-		})
+		}
+		if kepatuhan.MenargetkanCrawlerReviewer(namaBersih, agenPenggunaVal.String, asalRujukanVal.String) {
+			resp["peringatan"] = "Aturan ini perlu ditinjau karena membedakan pengunjung berdasarkan identitas crawler/reviewer dapat digunakan untuk menghindari pemeriksaan atau kebijakan platform."
+		}
+
+		c.JSON(http.StatusOK, resp)
 	}
 }
 
