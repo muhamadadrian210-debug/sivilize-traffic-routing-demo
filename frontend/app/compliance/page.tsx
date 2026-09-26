@@ -551,6 +551,37 @@ export default function HalamanKepatuhan() {
           )}
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 bg-slate-950/80 py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-300">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 font-semibold text-white">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Sivilize Traffic Platform
+            </span>
+            <span className="text-slate-600">|</span>
+            <span className="text-slate-300 font-medium">Compliance & Audit Module</span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-300 font-medium">
+            <Link href="/" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+              ← Kembali ke Dashboard Utama
+            </Link>
+            <span className="text-slate-600">•</span>
+            <a
+              href="https://github.com/muhamadadrian210-debug/sivilize-traffic-routing-demo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-white transition-colors"
+            >
+              GitHub Repository
+            </a>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400">&copy; {new Date().getFullYear()} Sivilize Corp. All rights reserved.</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

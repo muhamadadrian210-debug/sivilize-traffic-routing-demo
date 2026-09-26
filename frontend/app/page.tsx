@@ -417,60 +417,247 @@ export default function DashboardUtama() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
         {/* TAB 1: IKHTISAR & SISTEM */}
         {tabAktif === "ikhtisar" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* 1. Stat Telemetry Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl">
-                <span className="text-slate-400 text-xs font-semibold uppercase">Total Tujuan</span>
-                <p className="text-3xl font-extrabold text-white mt-1">{daftarTujuan.length}</p>
-                <span className="text-slate-500 text-xs mt-1 block">Halaman landing aktif</span>
+              {/* Card 1: Tujuan */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-indigo-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-indigo-400"></div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Halaman Tujuan</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    TARGETS
+                  </span>
+                </div>
+                <p className="text-3xl font-extrabold text-white mt-2 tracking-tight">{daftarTujuan.length}</p>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                  <span className="text-slate-300 text-xs font-medium">Halaman landing aktif terdaftar</span>
+                </div>
               </div>
-              <div className="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl">
-                <span className="text-slate-400 text-xs font-semibold uppercase">Aturan Aktif</span>
-                <p className="text-3xl font-extrabold text-emerald-400 mt-1">
-                  {daftarAturan.filter((a) => a.status).length} / {daftarAturan.length}
+
+              {/* Card 2: Aturan Aktif */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-emerald-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Aturan Evaluasi</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                    ACTIVE RULES
+                  </span>
+                </div>
+                <p className="text-3xl font-extrabold text-emerald-400 mt-2 tracking-tight">
+                  {daftarAturan.filter((a) => a.status).length} <span className="text-slate-400 text-lg font-normal">/ {daftarAturan.length}</span>
                 </p>
-                <span className="text-slate-500 text-xs mt-1 block">Rule Engine siap evaluasi</span>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-slate-300 text-xs font-medium">Rule Engine siap evaluasi prioritas</span>
+                </div>
               </div>
-              <div className="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl">
-                <span className="text-slate-400 text-xs font-semibold uppercase">Total Riwayat Log</span>
-                <p className="text-3xl font-extrabold text-indigo-400 mt-1">{paginasiLog.total}</p>
-                <span className="text-slate-500 text-xs mt-1 block">Tercatat di traffic_logs</span>
+
+              {/* Card 3: Total Log */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-sky-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-sky-400"></div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Riwayat Log Trafik</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-300 border border-sky-500/20">
+                    AUDIT SINK
+                  </span>
+                </div>
+                <p className="text-3xl font-extrabold text-sky-400 mt-2 tracking-tight">{paginasiLog.total}</p>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
+                  <span className="text-slate-300 text-xs font-medium">Tercatat di tabel traffic_logs</span>
+                </div>
               </div>
-              <div className="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl">
-                <span className="text-slate-400 text-xs font-semibold uppercase">Status Database</span>
-                <p className={`text-2xl font-bold mt-1 ${backendTerhubung ? "text-emerald-400" : "text-rose-400"}`}>
-                  {backendTerhubung ? "PostgreSQL Terhubung" : "Terputus"}
+
+              {/* Card 4: Status Database */}
+              <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-teal-500/50 transition-all rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${backendTerhubung ? "from-teal-500 to-emerald-400" : "from-rose-500 to-rose-400"}`}></div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 text-xs font-bold uppercase tracking-wider">Koneksi Database</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${backendTerhubung ? "bg-teal-500/10 text-teal-300 border-teal-500/20" : "bg-rose-500/10 text-rose-300 border-rose-500/20"}`}>
+                    {backendTerhubung ? "CONNECTED" : "OFFLINE"}
+                  </span>
+                </div>
+                <p className={`text-2xl font-extrabold mt-2 tracking-tight ${backendTerhubung ? "text-teal-300" : "text-rose-400"}`}>
+                  {backendTerhubung ? "PostgreSQL 17" : "Terputus"}
                 </p>
-                <span className="text-slate-500 text-xs mt-1 block">Port 5432 localhost</span>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className={`h-1.5 w-1.5 rounded-full ${backendTerhubung ? "bg-teal-400" : "bg-rose-500"}`}></span>
+                  <span className="text-slate-300 text-xs font-medium">
+                    {backendTerhubung ? "Port 5432 • ACID Logged" : "Periksa koneksi backend"}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Alur Sistem Visual */}
-            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h2 className="text-lg font-bold text-white mb-2">Alur Keputusan Trafik (Rule-based Routing)</h2>
-              <p className="text-slate-400 text-sm mb-6">
-                Setiap permintaan trafik yang masuk diproses secara bertingkat dari analisis konteks hingga penyimpanan log:
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-3 text-center">
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-indigo-400 font-bold text-sm block">1. Permintaan Masuk</span>
-                  <span className="text-xs text-slate-400 mt-1 block">IP, User-Agent, Referer, Negara</span>
+            {/* 2. Arsitektur Pipeline Alur Keputusan Trafik */}
+            <div className="bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-950 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+              {/* Header Pipeline */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                      PIPELINE ARCHITECTURE
+                    </span>
+                    <span className="text-slate-500">•</span>
+                    <span className="text-xs text-slate-300 font-medium">Deterministic Rule-based Routing</span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    Alur Keputusan Trafik (Rule-based Routing)
+                  </h2>
+                  <p className="text-slate-300 text-sm mt-1 max-w-3xl leading-relaxed">
+                    Setiap permintaan trafik yang masuk diproses secara berurutan dan deterministik dari analisis konteks hingga persistensi log:
+                  </p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-indigo-400 font-bold text-sm block">2. Request Analyzer</span>
-                  <span className="text-xs text-slate-400 mt-1 block">Klasifikasi perangkat & peramban</span>
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-xs text-slate-200 self-start sm:self-auto shadow-inner">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="font-semibold text-white">5 Tahap Eksekusi</span>
+                  <span className="text-slate-400">|</span>
+                  <span className="text-indigo-300 font-mono font-medium">&lt; 2ms latency</span>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-indigo-400 font-bold text-sm block">3. Rule Engine</span>
-                  <span className="text-xs text-slate-400 mt-1 block">Pencocokan multi-kondisi & prioritas</span>
+              </div>
+
+              {/* 5-Step Connected Pipeline Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5 pt-6 relative">
+                {/* Step 1 */}
+                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                        STEP 01
+                      </span>
+                      <span className="text-lg" title="Ingress">🌐</span>
+                    </div>
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                      Permintaan Masuk
+                    </h3>
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                      <p className="text-slate-200 text-xs font-medium leading-relaxed">
+                        Ekstraksi metadata HTTP: IP klien, User-Agent, Referer, dan resolusi GeoIP negara.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-indigo-300 font-medium">Inbound Ingest</span>
+                    <span className="text-slate-400 font-mono">Layer 7</span>
+                  </div>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-indigo-400 font-bold text-sm block">4. Penentuan Tujuan</span>
-                  <span className="text-xs text-slate-400 mt-1 block">Halaman Tujuan atau Cadangan</span>
+
+                {/* Step 2 */}
+                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                        STEP 02
+                      </span>
+                      <span className="text-lg" title="Request Analyzer">🔍</span>
+                    </div>
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                      Request Analyzer
+                    </h3>
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                      <p className="text-slate-200 text-xs font-medium leading-relaxed">
+                        Klasifikasi tipe perangkat (mobile, tablet, desktop) serta normalisasi jenis peramban.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-indigo-300 font-medium">Context Normalizer</span>
+                    <span className="text-slate-400 font-mono">Regex Engine</span>
+                  </div>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                  <span className="text-indigo-400 font-bold text-sm block">5. Traffic Logging</span>
-                  <span className="text-xs text-slate-400 mt-1 block">Catat hasil ke PostgreSQL</span>
+
+                {/* Step 3 */}
+                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                        STEP 03
+                      </span>
+                      <span className="text-lg" title="Rule Engine">⚡</span>
+                    </div>
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                      Rule Engine
+                    </h3>
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                      <p className="text-slate-200 text-xs font-medium leading-relaxed">
+                        Evaluasi multi-kondisi berurutan dari prioritas tertinggi ke terendah secara deterministik.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-indigo-300 font-medium">Priority Matching</span>
+                    <span className="text-slate-400 font-mono">Skor 1 - 100</span>
+                  </div>
+                </div>
+
+                {/* Step 4 */}
+                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                        STEP 04
+                      </span>
+                      <span className="text-lg" title="Route Dispatcher">🎯</span>
+                    </div>
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                      Penentuan Tujuan
+                    </h3>
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                      <p className="text-slate-200 text-xs font-medium leading-relaxed">
+                        Memilih URL halaman tujuan aturan atau mengarahkan ke fallback default jika tidak ada kecocokan.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-indigo-300 font-medium">Target / Fallback</span>
+                    <span className="text-slate-400 font-mono">Routing Matrix</span>
+                  </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="bg-slate-950/90 border border-slate-700/80 hover:border-indigo-400/60 transition-all duration-200 rounded-xl p-4 flex flex-col justify-between shadow-lg relative group">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px] font-bold font-mono border border-indigo-500/30">
+                        STEP 05
+                      </span>
+                      <span className="text-lg" title="Logging Sink">💾</span>
+                    </div>
+                    <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">
+                      Traffic Logging
+                    </h3>
+                    <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 mt-2.5">
+                      <p className="text-slate-200 text-xs font-medium leading-relaxed">
+                        Penyimpanan seluruh jejak audit evaluasi secara real-time ke tabel PostgreSQL traffic_logs.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-indigo-300 font-medium">Audit Trail</span>
+                    <span className="text-slate-400 font-mono">ACID Logged</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Technical Specifications Bar */}
+              <div className="mt-6 pt-5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <span className="text-indigo-400 font-bold">⚡ Latensi:</span>
+                  <span className="font-mono text-white">&lt; 2ms Overhead</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-300">
+                  <span className="text-emerald-400 font-bold">🛡️ Kepatuhan:</span>
+                  <span className="text-white">AdSense Safe Guard</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-300">
+                  <span className="text-sky-400 font-bold">🔁 Fallback:</span>
+                  <span className="text-white">Graceful Fallback</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-300">
+                  <span className="text-purple-400 font-bold">📜 Audit Sink:</span>
+                  <span className="font-mono text-white">PostgreSQL 100%</span>
                 </div>
               </div>
             </div>
@@ -968,8 +1155,34 @@ export default function DashboardUtama() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        Sivilize Traffic Routing Demo &bull; MVP Proof of Concept &bull; Sivilize Corp
+      <footer className="border-t border-slate-800 bg-slate-950/80 py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-300">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 font-semibold text-white">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Sivilize Traffic Platform
+            </span>
+            <span className="text-slate-600">|</span>
+            <span className="text-slate-300 font-medium">Enterprise Rule-based Routing & Compliance Demo</span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-300 font-medium">
+            <Link href="/compliance" className="text-emerald-400 hover:text-emerald-300 transition-colors">
+              🛡️ Kebijakan Kepatuhan AdSense
+            </Link>
+            <span className="text-slate-600">•</span>
+            <a
+              href="https://github.com/muhamadadrian210-debug/sivilize-traffic-routing-demo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-white transition-colors"
+            >
+              GitHub Repository
+            </a>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400">&copy; {new Date().getFullYear()} Sivilize Corp. All rights reserved.</span>
+          </div>
+        </div>
       </footer>
     </div>
   );
