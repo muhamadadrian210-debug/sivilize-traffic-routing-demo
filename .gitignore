@@ -1,0 +1,35 @@
+# Dependensi dan berkas build frontend
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Berkas biner dan kompilasi backend Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+backend/server
+backend/server.exe
+
+# Berkas konfigurasi rahasia lingkungan
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# PostgreSQL portable (hanya untuk pengembangan lokal, tidak masuk repositori)
+backend/.env
+
+# Berkas sistem operasi
+.DS_Store
+Thumbs.db
+
+# Editor dan IDE
+.vscode/
+.idea/
+*.swp
+*.swo
